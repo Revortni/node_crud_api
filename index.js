@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
-const membersApi = require('./routes/api/members');
+const membersRouter = require('./members/routes/members.route');
 
 //setup
 const app = express();
@@ -32,7 +32,7 @@ const logger = (req, res, next) => {
 	}
 };
 
-app.use('/api/members', membersApi);
+app.use('/api/members', membersRouter);
 app.use(logger);
 app.use((err, req, res, next) => {
 	res.status(404).json({ msg: err });
