@@ -1,29 +1,29 @@
-const express = require("express");
-const path = require("path");
-const bodyParser = require("body-parser");
-const membersApi = require("./routes/api/members");
+const express = require('express');
+const path = require('path');
+const bodyParser = require('body-parser');
+const membersApi = require('./routes/api/members');
 
 //setup
 const app = express();
-app.set("port", process.env.PORT || 3000);
+app.set('port', process.env.PORT || 3000);
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 //static folder
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, 'public')));
 
 const logger = (req, res, next) => {
 	switch (req.method) {
-		case "GET":
+		case 'GET':
 			next();
 			break;
-		case "POST":
+		case 'POST':
 			next();
 			break;
-		case "PUT":
+		case 'PUT':
 			next();
 			break;
-		case "DELETE":
+		case 'DELETE':
 			next();
 			break;
 		default:
@@ -32,9 +32,13 @@ const logger = (req, res, next) => {
 	}
 };
 
-app.use("/api/members", membersApi);
+app.use('/api/members', membersApi);
 app.use(logger);
+app.use((err, req, res, next) => {
+	res.status(404).json({ msg: err });
+	res.end();
+});
 
-app.listen(app.get("port"), () => {
-	console.log("Listening on port", app.get("port"));
+app.listen(app.get('port'), () => {
+	console.log('Listening on port', app.get('port'));
 });

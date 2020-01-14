@@ -1,84 +1,90 @@
-const express = require("express");
+const express = require('express');
 const membersRouter = express.Router();
-const members = require("./members");
+const members = require('./members');
 
-//static data
-let DATA = require("./data.json");
+//import db
+const db = require('./db');
+db.connect();
 
 const getMember = (req, res, next) => {
-	const id = req.params.id;
-	const filtered = DATA.filter(member => parseInt(id) === member.id);
-	if (filtered.length > 0) {
-		res.json(filtered);
-	} else {
-		res.status(400).json("No member matching id was found.");
+	const { id } = req.params;
+	if (isNaN(id)) {
+		next(`Invalid value for id : ${id} , id must be a number`);
+		return;
 	}
-	res.end();
+
+	db.fetchRecord(id)
+		.then(data => {
+			if (data.length <= 0) throw `No member with id ${id} was found.`;
+			res.json({ data });
+			res.end();
+		})
+		.catch(err => {
+			next(err);
+		});
 };
 
 const addMember = (req, res, next) => {
 	const data = req.body;
-	data.id = DATA.length + 1;
-	DATA.push(data);
-	res.json(data);
-	res.end();
+
+	db.insertRecord(data)
+		.then(data => {
+			res.json({ msg: data });
+			res.end();
+		})
+		.catch(err => {
+			next(err);
+		});
 };
 
 const updateMember = (req, res, next) => {
-	const id = req.params.id || null;
-
-	if (!id) {
-		res.json({ msg: "Pass id parameter" });
-		res.end();
-		return;
-	}
-
+	const { id } = req.params;
 	const data = req.body;
 
-	DATA.forEach((member, index) => {
-		if (parseInt(id) === member.id) {
-			DATA[index] = { ...member, ...data };
-		}
-	});
-
-	res.json(DATA);
-	res.end();
+	db.updateRecord({ id, data })
+		.then(data => {
+			res.json({ msg: data });
+			res.end();
+		})
+		.catch(err => {
+			next(err);
+		});
 };
 
 const deleteMember = (req, res, next) => {
-	const id = req.params.id || null;
-
-	if (!id) {
-		res.json({ msg: "Pass id parameter" });
-		res.end();
-		return;
-	}
-
-	const data = req.body;
-
-	DATA = DATA.filter((member, index) => parseInt(id) !== member.id);
-
-	res.json(DATA);
-	res.end();
+	const { id } = req.params || null;
+	db.deleteRecord(id)
+		.then(data => {
+			res.json({ msg: data });
+			res.end();
+		})
+		.catch(err => {
+			next(err);
+		});
 };
 
 const getMemberList = (req, res, next) => {
-	res.json(DATA);
-	res.end();
-	return;
+	db.fetchAll()
+		.then(data => {
+			res.json({ data });
+			res.end();
+		})
+		.catch(err => {
+			next(err);
+		});
 };
 
-//PUT
-membersRouter.put("/update-member/:id", updateMember);
-
-//PUT
-membersRouter.delete("/delete-member/:id", deleteMember);
-
 //GET
-membersRouter.get("/:id", getMember);
-membersRouter.get("/all", getMemberList);
+membersRouter.get('/all', getMemberList);
+
+//fetch, update, delete members
+membersRouter
+	.route('/:id')
+	.get(getMember)
+	.put(updateMember)
+	.delete(deleteMember);
 
 //POST
-membersRouter.post("/add-member", addMember);
+membersRouter.post('/add', addMember);
 
 module.exports = membersRouter;
