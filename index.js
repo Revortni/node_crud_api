@@ -3,6 +3,7 @@ const path = require('path');
 const morgan = require('morgan');
 const apiRouter = require('./routes/api.routes');
 const config = require('./configs');
+const cors = require('cors');
 
 //setup
 const app = express();

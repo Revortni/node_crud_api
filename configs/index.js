@@ -1,4 +1,4 @@
 module.exports = {
 	PORT: 3000,
-	secret: 'lhjhrgdfcvbxvd'
+	secret: 'sdjhfEIUF$HDqee2421'
 };

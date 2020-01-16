@@ -2,15 +2,15 @@ const bcrypt = require('bcryptjs');
 const config = require('./../configs');
 
 const encrypt = payload => {
-	return bcrypt.genSalt(10, function(err, salt) {
-		bcrypt.hash(payload, salt, function(err, hash) {
-			return hash;
-		});
-	});
+	const salt = bcrypt.genSaltSync(10);
+	return bcrypt.hashSync(payload, salt);
 };
 
 const match = (payload, hash) => {
-	return bcrypt.compare(payload, hash).then(res => {
-		return res;
-	});
+	return bcrypt.compareSync(payload, hash);
+};
+
+module.exports = {
+	encrypt,
+	match
 };

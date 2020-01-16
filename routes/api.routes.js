@@ -1,5 +1,5 @@
 const authenticate = require('./../middlewares/authenticate');
-const authRoute = require('./../controllers/auth.route');
+const authRoute = require('../modules/auth/routes/auth.route');
 const memberRoute = require('../modules/members/routes/members.route');
 
 const router = require('express').Router();

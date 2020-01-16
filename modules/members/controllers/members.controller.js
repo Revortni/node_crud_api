@@ -3,7 +3,14 @@ const membersRouter = express.Router();
 
 //import query
 const query = require('../query/members.query');
-query.connect();
+query
+	.connect()
+	.then(done => {
+		console.log(done);
+	})
+	.catch(err => {
+		console.log(err);
+	});
 
 const getMember = (req, res, next) => {
 	const { id } = req.params;
@@ -13,7 +20,7 @@ const getMember = (req, res, next) => {
 	}
 
 	query
-		.fetchRecord({ key: 'id', value: id })
+		.fetchRecord({ id })
 		.then(data => {
 			if (data.length <= 0) throw `No member with id ${id} was found.`;
 			res.status(200).json({ data });
@@ -68,7 +75,7 @@ const deleteMember = (req, res, next) => {
 
 const getMemberList = (req, res, next) => {
 	query
-		.fetchAll()
+		.fetchRecord({})
 		.then(data => {
 			res.status(200).json({ data });
 			res.end();

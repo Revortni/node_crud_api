@@ -2,26 +2,31 @@
 const mysql = require('mysql');
 
 class Database {
-	constructor({ database, tableName }) {
+	constructor({ database, table }) {
 		this.database = database;
-		this.table = tableName;
+		this.table = table;
+		this.connection = null;
 	}
 
 	//connect to database
-	connect = () => {
-		const connection = mysql.createConnection({
-			host: 'localhost',
-			user: 'root',
-			password: '',
-			database: this.database
+	connect = param => {
+		const { host, user, password } = param;
+		const database = this.database;
+
+		this.connection = mysql.createConnection({
+			host,
+			user,
+			password,
+			database
 		});
 
-		//create connection
-		connection.connect(err => {
-			if (err) throw console.log(err);
-			console.log('connected');
+		return new Promise((resolve, reject) => {
+			//create connection
+			this.connection.connect(err => {
+				if (err) reject(err);
+				resolve(`Connected to ${this.database} database`);
+			});
 		});
-		this.connection = connection;
 	};
 
 	//execute the sql query
@@ -36,50 +41,66 @@ class Database {
 
 	//insert records
 	//Input: keys value pairs
-	insertRecord = data => {
+	insert = data => {
 		const keys = Object.keys(data);
 		const values = Object.values(data);
 		const headers = keys.join(',');
 		const records = values.map(x => `'${x}'`).join(',');
 		const sql = `INSERT INTO ${this.table} (${headers}) VALUES (${records})`;
-		return runQuery(sql);
+		return this.runQuery(sql);
 	};
 
-	//Fetch a record from database with matching key value pair
-	fetchRecord = ({ key, value }) => {
-		const sql = `SELECT * FROM ${this.table} where ${key}=${value}`;
-		return runQuery(sql);
+	/**
+	 * Fetch a record from database with matching key value pair
+	 *
+	 * @param { key : value, ... },   key: Header of column , value: value of column
+	 *
+	 * @return { array }, Returns array of records matching condition.
+	 */
+	fetch = param => {
+		let condition = '';
+		if (Object.keys(param).length > 0) {
+			const keys = Object.keys(param);
+			const statement = keys
+				.map(x => ` ${x} = '${param[x]}' `)
+				.join('AND');
+			condition = ` WHERE${statement}`;
+		}
+		const sql = `SELECT * FROM ${this.table}${condition}`;
+		return this.runQuery(sql);
 	};
 
-	//fetch all records from database
-	fetchAll = () => {
-		const sql = `SELECT * FROM ${this.table}`;
-		return runQuery(sql);
-	};
-
-	//delete a record from database with matching id
-	updateRecord = ({ id, data }) => {
+	/**
+	 * Deletes a record from database with matching id.
+	 *
+	 * @param id,   id of record to be deleted
+	 *
+	 * @param { key : value, ... }   key: Header of column , value: value of column
+	 *
+	 * @return { array }  status of database table
+	 */
+	update = ({ id, data }) => {
 		const keys = Object.keys(data);
 		const statement = keys.map(x => `${x} = '${data[x]}'`).join(',');
 		const sql = `UPDATE ${this.table} SET ${statement} WHERE id = ${id}`;
-		return runQuery(sql);
+		return this.runQuery(sql);
 	};
 
 	//delete a record from database with matching id
-	deleteRecord = id => {
+	delete = id => {
 		const sql = `DELETE FROM ${this.table} WHERE id = ${id}`;
-		return runQuery(sql);
+		return this.runQuery(sql);
 	};
 
 	checkIfTableExists = () => {
 		const sql = `SELECT * FROM information_schema.tables WHERE table_schema = '${this.database}' AND table_name = '${this.table}' LIMIT 1;`;
-		return runQuery(sql);
+		return this.runQuery(sql);
 	};
 
 	//initialize a table
 	createTable = () => {
 		const sql = `CREATE TABLE ${this.table} (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255),username VARCHAR(255), phone VARCHAR(255),website VARCHAR(255),email VARCHAR(255))`;
-		return runQuery(sql);
+		return this.runQuery(sql);
 	};
 }
 
