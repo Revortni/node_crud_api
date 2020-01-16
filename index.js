@@ -15,6 +15,9 @@ app.use(express.json());
 // third party middleware for logging
 app.use(morgan('dev'));
 
+//allow request from everywhere
+app.use(cors());
+
 //static folder
 app.use(express.static(path.join(__dirname, 'public')));
 

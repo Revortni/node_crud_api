@@ -13,7 +13,7 @@ const getMember = (req, res, next) => {
 	}
 
 	query
-		.fetchRecord(id)
+		.fetchRecord({ key: 'id', value: id })
 		.then(data => {
 			if (data.length <= 0) throw `No member with id ${id} was found.`;
 			res.status(200).json({ data });
@@ -81,13 +81,47 @@ const getMemberList = (req, res, next) => {
 //insert data from file
 const insertFromFile = () => {
 	//static data
-	const DATA = require('./data.json');
+	const DATA = require('../models/data.json');
 
 	DATA.forEach(x => {
-		const keys = Object.keys(x);
-		const values = Object.values(x);
-		insertRecord(keys, values);
+		query
+			.insertRecord(x)
+			.then(data => {
+				console.log(data);
+			})
+			.catch(err => {
+				next({ err });
+			});
 	});
+
+	res.status(200).json({ data: DATA });
+	res.end();
+};
+
+const searchMember = (req, res, next) => {
+	let param;
+
+	//search ={key:<key>,value:<value}
+	switch (req.method) {
+		case 'GET':
+			param = req.params.search;
+			break;
+		case 'POST':
+			param = req.body.search;
+			break;
+		default:
+			next({ err });
+	}
+
+	query
+		.fetchRecord(param)
+		.then(data => {
+			res.status(200).json({ data });
+			res.end();
+		})
+		.catch(err => {
+			next({ err });
+		});
 };
 
 module.exports = {
@@ -95,6 +129,7 @@ module.exports = {
 	addMember,
 	updateMember,
 	deleteMember,
+	searchMember,
 	getMemberList,
 	insertFromFile
 };

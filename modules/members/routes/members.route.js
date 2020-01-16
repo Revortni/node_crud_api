@@ -2,10 +2,19 @@ const express = require('express');
 const membersRouter = express.Router();
 const controller = require('../controllers/members.controller');
 
-//GET
-membersRouter.get('/all', controller.getMemberList);
+//Root
+membersRouter.route('/').get(controller.getMemberList);
 
-//fetch, update, delete members
+//Add member
+membersRouter.post('/add', controller.addMember);
+
+//Search member
+membersRouter
+	.route('/search')
+	.get(controller.searchMember)
+	.post(controller.searchMember);
+
+//fetch, update, delete members by id
 membersRouter
 	.route('/:id')
 	.get(controller.getMember)
@@ -18,8 +27,5 @@ membersRouter
 		}
 		return controller.deleteMember(req, res, next);
 	});
-
-//POST
-membersRouter.post('/add', controller.addMember);
 
 module.exports = membersRouter;

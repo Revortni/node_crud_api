@@ -21,8 +21,7 @@ module.exports = function(req, res, next) {
 			if (err) {
 				return next({ err });
 			}
-			console.log('decoded value >>', decoded);
-			req.user = { role: decoded.id };
+			req.user = { ...req.user, role: decoded.id };
 			return next();
 		});
 	} else {
