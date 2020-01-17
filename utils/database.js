@@ -102,6 +102,19 @@ class Database {
 		const sql = `CREATE TABLE ${this.table} (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255),username VARCHAR(255), phone VARCHAR(255),website VARCHAR(255),email VARCHAR(255))`;
 		return this.runQuery(sql);
 	};
+
+	checkIfRecordExists = param => {
+		let condition = '';
+		if (Object.keys(param).length > 0) {
+			const keys = Object.keys(param);
+			const statement = keys
+				.map(x => ` ${x} = '${param[x]}' `)
+				.join('OR');
+			condition = ` WHERE${statement}`;
+		}
+		const sql = `SELECT * FROM ${this.table}${condition}`;
+		return this.runQuery(sql);
+	};
 }
 
 module.exports = Database;
