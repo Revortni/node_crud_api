@@ -42,19 +42,19 @@ const logger = (req, res, next) => {
 };
 
 //route to API router
-app.use('/api', logger, apiRouter);
+app.use('/app', logger, apiRouter);
 
 //when route doesnt exist
 app.use(function(req, res, next) {
 	next({
 		status: 404,
-		msg: 'Not Found'
+		msg: 'Resource not found.'
 	});
 });
 
 //error handling middleware
-app.use(({ err, msg }, req, res, next) => {
-	res.status(400).json({
+app.use(({ err, msg, status }, req, res, next) => {
+	res.status(status || 400).json({
 		msg: msg || 'Stopped at error handling middleware',
 		err
 	});

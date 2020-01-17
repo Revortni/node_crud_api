@@ -17,6 +17,9 @@ membersRouter
 //fetch, update, delete members by id
 membersRouter
 	.route('/:id')
+	.post((req, res, next) =>
+		next({ status: 405, msg: 'Invalid post request' })
+	)
 	.get(controller.getMember)
 	.put(controller.updateMember)
 	.delete((req, res, next) => {

@@ -19,14 +19,12 @@ module.exports = function(req, res, next) {
 	if (token) {
 		jwt.verify(token, config.secret, (err, decoded) => {
 			if (err) {
-				return next({ err });
+				return next({ status: 401, msg: 'Invalid token.', err });
 			}
 			req.user = { ...req.user, role: 1 };
 			return next();
 		});
 	} else {
-		next({
-			msg: 'Token was not provided.'
-		});
+		next({ status: 401, msg: 'Unauthorized. Token was not provided.' });
 	}
 };
