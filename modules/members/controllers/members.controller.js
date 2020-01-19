@@ -3,13 +3,21 @@ const query = require('../query/members.query');
 
 const connectToDatabase = (req, res, next) => {
   query
-    .connect()
+    .connect({
+      host: 'localhost',
+      user: 'root',
+      password: ''
+    })
     .then(done => {
       console.log(done);
       next();
     })
     .catch(err => {
-      next({ err, status: 500 });
+      next({
+        err: err.code,
+        msg: 'Database error, could not connect.',
+        status: 500
+      });
     });
 };
 

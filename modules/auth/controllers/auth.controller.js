@@ -49,10 +49,16 @@ const login = (req, res, next) => {
 							res.end();
 							return;
 						} else {
-							next({ msg: `Invalid password for ${email}` });
+							next({
+								msg: `Invalid email or password`,
+								status: 400
+							});
 						}
 					} else {
-						next({ err: 'No matching record found.', status: 404 });
+						next({
+							msg: `No matching record found for ${email}`,
+							status: 404
+						});
 					}
 				})
 				.catch(err => next({ err }));

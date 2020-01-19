@@ -3,12 +3,8 @@ const TABLE_NAME = 'user_info';
 const Database = require('../../../utils/database');
 const db = new Database({ database: DATABASE_NAME, table: TABLE_NAME });
 
-const connect = () => {
-  return db.connect({
-    host: 'localhost',
-    user: 'root',
-    password: ''
-  });
+const connect = params => {
+  return db.connect(params);
 };
 
 //insert records
@@ -19,8 +15,6 @@ const insertRecord = data => {
 
 //Fetch a record from database with matching key value pair
 const fetchRecord = param => {
-  createTable();
-  insertFromFile();
   return db.fetch(param);
 };
 
