@@ -9,7 +9,7 @@ const connectToDatabase = (req, res, next) => {
       next();
     })
     .catch(err => {
-      next(err);
+      next({ err, status: 500 });
     });
 };
 
@@ -42,7 +42,11 @@ const addMember = (req, res, next) => {
       res.end();
     })
     .catch(err => {
-      next({ err });
+      next({
+        err: err.code,
+        msg: 'Database error, could not connect.',
+        status: 500
+      });
     });
 };
 

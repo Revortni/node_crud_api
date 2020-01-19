@@ -22,7 +22,7 @@ router
   .route('/:id')
   .post((req, res, next) => next({ status: 405, msg: 'Invalid post request' }))
   .get(controller.getMember)
-  .put(controller.updateMember)
+  .patch(controller.updateMember)
   .delete((req, res, next) => {
     if (req.user.role !== 2) {
       return next({

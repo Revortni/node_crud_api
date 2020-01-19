@@ -24,7 +24,7 @@ class Database {
 			//create connection
 			this.connection.connect(err => {
 				if (err) reject(err);
-				resolve(`Connected to ${this.database} database`);
+				resolve(`Connected to ${this.database} database ${this.table}`);
 			});
 		});
 	};
