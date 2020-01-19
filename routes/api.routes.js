@@ -5,8 +5,8 @@ const memberRoute = require('../modules/members/routes/members.route');
 
 const router = require('express').Router();
 
-// router.use('/login', authRoute);
+router.use('/login', authRoute);
 router.use('/register', registerRoute);
-// router.use('/members', authenticate, memberRoute);
+router.use('/members', authenticate, memberRoute);
 
 module.exports = router;
