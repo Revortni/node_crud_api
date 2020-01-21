@@ -9,15 +9,16 @@ const cors = require('cors');
 const app = express();
 app.set('port', process.env.PORT || config.PORT);
 
+//allow request from everywhere
+// app.use(cors({origin:['http://localhost:4000'],credentials: true}));
+app.use(cors());
+
 //using inbuilt middleware to parse incoming data
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // third party middleware for logging
 app.use(morgan('dev'));
-
-//allow request from everywhere
-app.use(cors());
 
 //static folder
 app.use(express.static(path.join(__dirname, 'public')));

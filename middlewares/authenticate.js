@@ -21,6 +21,12 @@ module.exports = function(req, res, next) {
 			if (err) {
 				return next({ status: 401, msg: 'Invalid token.', err });
 			}
+			if(req.url==='/verify'){
+				const {id,iat,permissionLevel,...rest}=decoded;
+				res.json({data:rest})
+				res.end();
+				return;
+			}
 			req.user = { ...req.user, role: 1 };
 			return next();
 		});

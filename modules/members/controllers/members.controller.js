@@ -99,17 +99,19 @@ const getMemberList = (req, res, next) => {
 };
 
 //insert data from file
-const insertFromFile = () => {
+const insertFromFile = (req, res, next) => {
   //static data
   const DATA = require('../models/data.json');
 
   DATA.forEach(x => {
+    console.log(x);
     query
       .insertRecord(x)
       .then(data => {
         console.log(data);
       })
       .catch(err => {
+        console.log(err)
         next({ err });
       });
   });

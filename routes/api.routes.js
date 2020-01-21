@@ -8,5 +8,6 @@ const router = require('express').Router();
 router.use('/login', authRoute);
 router.use('/register', registerRoute);
 router.use('/members', authenticate, memberRoute);
+router.use('/',authenticate)
 
 module.exports = router;

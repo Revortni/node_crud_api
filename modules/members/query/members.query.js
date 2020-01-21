@@ -4,6 +4,9 @@ const Database = require('../../../utils/database');
 const db = new Database({ database: DATABASE_NAME, table: TABLE_NAME });
 
 const connect = params => {
+  if(db.connected){
+    Promise.resolve("Database already connected")
+  }
   return db.connect(params);
 };
 

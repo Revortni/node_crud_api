@@ -46,6 +46,7 @@ const register = (value, callback) => {
 
 const postRegister = (req, res, next) => {
 	const { firstName, lastName, email, password } = req.body;
+	email = email.toLowerCase();
 	validator
 		.validate({ firstName, lastName, email, password })
 		.then(value => {

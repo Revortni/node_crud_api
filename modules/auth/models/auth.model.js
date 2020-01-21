@@ -6,7 +6,7 @@ const loginSchema = Joi.object({
     .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
     .required(),
   password: Joi.string()
-    .pattern(new RegExp(/^[a-zA-Z0-9]{3,30}$/))
+    .pattern(new RegExp(/^[a-zA-Z0-9]{1,30}$/))
     .required()
 }).with('email', 'password');
 
