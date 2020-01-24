@@ -18,7 +18,7 @@ const connectToDatabase = (req, res, next) => {
 		.catch(err => {
 			next({
 				err: err.code,
-				msg: 'Database error, could not connect.',
+				msg: 'Server database error.',
 				status: 500
 			});
 		});
@@ -31,11 +31,10 @@ const generateToken = data => {
 
 const login = (req, res, next) => {
 	const { email, password } = req.body;
-
 	validator
 		.validate({ email, password })
 		.then(value => {
-			db.fetch({ email })
+			db.fetch({ criteria:{email} })
 				.then(data => {
 					if (data.length > 0) {
 						const sentPassword = req.body.password;
@@ -43,7 +42,7 @@ const login = (req, res, next) => {
 						if (hash.match(sentPassword, password)) {
 							let token = generateToken(rest);
 							res.status(200).json({
-								email,
+								...rest,
 								token
 							});
 							res.end();

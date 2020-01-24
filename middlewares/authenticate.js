@@ -3,7 +3,6 @@ const config = require('./../configs');
 
 module.exports = function(req, res, next) {
 	let token;
-
 	if (req.headers['x-acces-token']) {
 		token = req.headers['x-access-token'];
 	}
@@ -23,12 +22,13 @@ module.exports = function(req, res, next) {
 			}
 			if(req.url==='/verify'){
 				const {id,iat,permissionLevel,...rest}=decoded;
-				res.json({data:rest})
+				res.json({...rest})
 				res.end();
 				return;
 			}
-			req.user = { ...req.user, role: 1 };
-			return next();
+			const {id} = decoded;
+			req.user_id = id;
+			next();
 		});
 	} else {
 		next({ status: 401, msg: 'Unauthorized. Token was not provided.' });

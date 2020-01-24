@@ -18,7 +18,7 @@ const connectToDatabase = (res, req, next) => {
 		.catch(err => {
 			next({
 				err: err.code,
-				msg: 'Database error, could not connect.',
+				msg: 'Server database error.',
 				status: 500
 			});
 		});
@@ -45,23 +45,23 @@ const register = (value, callback) => {
 };
 
 const postRegister = (req, res, next) => {
-	const { firstName, lastName, email, password } = req.body;
-	email = email.toLowerCase();
+	const { firstName, lastName, password } = req.body;
+	const email = req.body.email.toLowerCase();
 	validator
 		.validate({ firstName, lastName, email, password })
 		.then(value => {
 			db.checkIfRecordExists({ email }).then(match => {
 				if (match.length > 0) {
-					res.json({
+					next({
 						status: 400,
-						msg: `A user with ${email} already exists`
+						msg: `A user with email ${email} already exists.`
 					});
 					return;
 				}
 				register(value, () => {
 					res.json({
-						status: 401,
-						msg: 'User created',
+						status: 200,
+						msg: 'Your account has been created.',
 						info: {
 							firstName,
 							lastName,

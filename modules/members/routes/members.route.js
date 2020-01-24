@@ -6,7 +6,7 @@ const controller = require('../controllers/members.controller');
 router.use(controller.connectToDatabase);
 
 //Root
-router.route('/').get(controller.insertFromFile);
+router.route('/').get(controller.getMemberList);
 
 //Add member
 router.post('/add', controller.addMember);

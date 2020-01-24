@@ -34,6 +34,9 @@ const logger = (req, res, next) => {
 		case 'PUT':
 			next();
 			break;
+		case 'PATCH':
+			next();
+			break;
 		case 'DELETE':
 			next();
 			break;

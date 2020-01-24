@@ -29,7 +29,7 @@ const getMember = (req, res, next) => {
   }
 
   query
-    .fetchRecord({ id })
+    .fetchRecord({ criteria:{id} })
     .then(data => {
       if (data.length <= 0) throw `No member with id ${id} was found.`;
       res.status(200).json({ data });
@@ -136,7 +136,7 @@ const searchMember = (req, res, next) => {
   }
 
   query
-    .fetchRecord(param)
+    .fetchRecord({criteria:param})
     .then(data => {
       res.status(200).json({ data });
       res.end();

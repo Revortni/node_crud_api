@@ -1,6 +1,13 @@
 //import sql
 const mysql = require('mysql');
 
+const isBoolean =(x)=>{
+      if(typeof x ==='boolean'){
+        return x;
+      }
+      return `'${x}'`;
+    }
+
 class Database {
   constructor({ database, table }) {
     this.database = database;
@@ -57,14 +64,17 @@ class Database {
    *
    * @return { array }, Returns array of records matching condition.
    */
-  fetch = param => {
+  fetch = params => {;
+    const {fields, criteria, order} ={fields:null,criteria:{},order:false,... params};
     let condition = '';
-    if (Object.keys(param).length > 0) {
-      const keys = Object.keys(param);
-      const statement = keys.map(x => ` ${x} = '${param[x]}' `).join('AND');
+    const orderBy = order?' ORDER BY createdAt DESC':'';
+    const columns = fields?fields.join(','):'*';
+    if (Object.keys(criteria).length > 0) {
+      const keys = Object.keys(criteria);
+      const statement = keys.map(x => ` ${x} = '${criteria[x]}' `).join('AND');
       condition = ` WHERE${statement}`;
     }
-    const sql = `SELECT * FROM ${this.table}${condition}`;
+    const sql = `SELECT ${columns} FROM ${this.table}${condition}${orderBy}`;
     return this.runQuery(sql);
   };
 
@@ -79,7 +89,7 @@ class Database {
    */
   update = ({ id, data }) => {
     const keys = Object.keys(data);
-    const statement = keys.map(x => `${x} = '${data[x]}'`).join(',');
+    const statement = keys.map(x => `${x} = ${isBoolean(data[x])}`).join(',');
     const sql = `UPDATE ${this.table} SET ${statement} WHERE id = ${id}`;
     return this.runQuery(sql);
   };
